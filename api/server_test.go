@@ -70,8 +70,7 @@ func TestSocket(t *testing.T) {
 	}
 
 	t.Run("socket doesn't exist before", func(t *testing.T) {
-		tmpDir := t.TempDir()
-		sockFile := tmpDir + "/test.sock"
+		sockFile := shortTempDir(t) + "/test.sock"
 
 		cfg := config.MustNewConfigFrom(map[string]interface{}{
 			"host": "unix://" + sockFile,
@@ -98,7 +97,7 @@ func TestSocket(t *testing.T) {
 	})
 
 	t.Run("starting beat and recover a dangling socket file", func(t *testing.T) {
-		sockFile := t.TempDir() + "/test.sock"
+		sockFile := shortTempDir(t) + "/test.sock"
 
 		// Create the socket before the server.
 		f, err := os.Create(sockFile)
@@ -132,6 +131,19 @@ func TestSocket(t *testing.T) {
 
 func isWindows() bool {
 	return runtime.GOOS == "windows"
+}
+
+// shortTempDir returns a temporary directory with a short path.
+//
+// Unix domain socket paths are limited to 104 bytes on macOS (108 on Linux).
+// t.TempDir() embeds the full (sub)test name in the path, which on macOS,
+// combined with the long $TMPDIR (/var/folders/...), easily exceeds that
+// limit and makes bind(2) fail with EINVAL.
+func shortTempDir(t *testing.T) string {
+	dir, err := os.MkdirTemp("", "api")
+	require.NoError(t, err, "cannot create temporary directory")
+	t.Cleanup(func() { os.RemoveAll(dir) })
+	return dir
 }
 
 func getResponse(t *testing.T, sockFile, url string) string {

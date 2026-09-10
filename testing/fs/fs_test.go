@@ -31,7 +31,9 @@ import (
 func TestTempDir(t *testing.T) {
 	t.Run("temp dir is created using os.TempDir", func(t *testing.T) {
 		tempDir := TempDir(t)
-		osTempDir := os.TempDir()
+		// On macOS $TMPDIR has a trailing slash, which os.TempDir returns
+		// verbatim, while filepath.Dir never returns a trailing slash.
+		osTempDir := filepath.Clean(os.TempDir())
 
 		baseDir := filepath.Dir(tempDir)
 		if baseDir != osTempDir {
