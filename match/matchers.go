@@ -20,7 +20,6 @@ package match
 import (
 	"bytes"
 	"fmt"
-	"reflect"
 	"strings"
 	"unsafe"
 )
@@ -255,11 +254,6 @@ func bytesToString(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
-func stringToBytes(s string) (b []byte) {
-	pb := (*reflect.SliceHeader)(unsafe.Pointer(&b))
-	ps := (*reflect.StringHeader)(unsafe.Pointer(&s))
-	pb.Data = ps.Data
-	pb.Len = ps.Len
-	pb.Cap = ps.Len
-	return b
+func stringToBytes(s string) []byte {
+	return unsafe.Slice(unsafe.StringData(s), len(s))
 }

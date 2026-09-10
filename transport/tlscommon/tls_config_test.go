@@ -301,6 +301,7 @@ func TestTrustRootCA(t *testing.T) {
 			pool := cfg.rootCAs.GetCertPool()
 			if tc.expectedRootCAsLen == 0 {
 
+				//nolint:staticcheck // Subjects is the only way to count the certificates in a pool; the pool is never the system pool here
 				if pool != nil && len(pool.Subjects()) > 0 {
 					t.Fatal("cfg.RootCAs pool should be empty")
 				}
@@ -309,6 +310,7 @@ func TestTrustRootCA(t *testing.T) {
 					t.Fatal("cfg.RootCAs pool should not be nil")
 				}
 
+				//nolint:staticcheck // Subjects is the only way to count the certificates in a pool; the pool is never the system pool here
 				if got, expected := len(pool.Subjects()), tc.expectedRootCAsLen; got != expected {
 					t.Fatalf("expecting cfg.RootCAs to have %d element, got %d instead", expected, got)
 				}

@@ -21,11 +21,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 
 	"github.com/elastic/elastic-agent-libs/logp"
@@ -1096,9 +1098,16 @@ func TestMapStrJSONLog(t *testing.T) {
 }
 
 func BenchmarkMapStrLogging(b *testing.B) {
-	err := logp.DevelopmentSetup(logp.ToDiscardOutput())
+	// Encode to JSON but discard the output, so the benchmark measures the
+	// cost of encoding the mapstr.M and not the cost of writing it out.
+	discardCore := zapcore.NewCore(
+		zapcore.NewJSONEncoder(logp.JSONEncoderConfig()),
+		zapcore.AddSync(io.Discard),
+		zapcore.DebugLevel)
+	logger, err := logp.NewDevelopmentLogger("benchtest", zap.WrapCore(func(zapcore.Core) zapcore.Core {
+		return discardCore
+	}))
 	require.NoError(b, err)
-	logger := logp.NewLogger("benchtest")
 
 	m := M{
 		"test": 15,
