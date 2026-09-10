@@ -182,8 +182,11 @@ func TestMakeVerifyServerConnection(t *testing.T) {
 			} else {
 				require.Error(t, err)
 				// We want to ensure the error type/message are the expected ones
-				// so we compare the types and the message
-				assert.IsType(t, test.expectedError, err)
+				// so we compare the types and the message.
+				// ErrorIs is not suitable because the expected x509 errors are struct values
+				// and the actual ones carry extra details (e.g. CertificateInvalidError.Detail),
+				// and ErrorAs would need a typed target per test case.
+				assert.IsType(t, test.expectedError, err) //nolint:testifylint // comparing error types on purpose, see above
 				assert.Contains(t, err.Error(), test.expectedError.Error())
 			}
 		})
