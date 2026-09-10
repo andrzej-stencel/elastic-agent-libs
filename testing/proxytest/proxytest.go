@@ -406,7 +406,11 @@ func addIDToReqCtx(r *http.Request, id string) *http.Request {
 }
 
 func idFromReqCtx(r *http.Request) string { //nolint:unused // kept for completeness
-	return r.Context().Value(ctxKeyRecID{}).(string)
+	id, ok := r.Context().Value(ctxKeyRecID{}).(string)
+	if !ok {
+		return ""
+	}
+	return id
 }
 
 func addLoggerReqCtx(r *http.Request, log *slog.Logger) *http.Request {
