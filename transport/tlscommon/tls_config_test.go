@@ -169,7 +169,7 @@ func TestMakeVerifyServerConnection(t *testing.T) {
 			// FIPS builds always install a callback to enforce key-type constraints.
 			if verifier == nil {
 				require.Equal(t, VerifyNone, test.verificationMode, "only VerifyNone should return a nil verifier")
-				require.Nil(t, test.expectedError, "nil verifier cannot produce an error")
+				require.NoError(t, test.expectedError, "nil verifier cannot produce an error")
 				return
 			}
 
@@ -297,7 +297,7 @@ func TestTrustRootCA(t *testing.T) {
 
 			pool := cfg.rootCAs.GetCertPool()
 			if tc.expectedRootCAsLen == 0 {
-				//nolint:staticcheck // we do not expect the system root CAs.
+
 				if pool != nil && len(pool.Subjects()) > 0 {
 					t.Fatal("cfg.RootCAs pool should be empty")
 				}
@@ -305,7 +305,7 @@ func TestTrustRootCA(t *testing.T) {
 				if pool == nil {
 					t.Fatal("cfg.RootCAs pool should not be nil")
 				}
-				//nolint:staticcheck // we do not expect the system root CAs.
+
 				if got, expected := len(pool.Subjects()), tc.expectedRootCAsLen; got != expected {
 					t.Fatalf("expecting cfg.RootCAs to have %d element, got %d instead", expected, got)
 				}
@@ -747,7 +747,7 @@ func startTestServer(t *testing.T, serverAddr string, serverCerts []tls.Certific
 				t.Errorf("coluld not write to client: %s", err)
 			}
 		}),
-		TLSConfig: &tls.Config{ //nolint:gosec // This TLS config is used only for testing.
+		TLSConfig: &tls.Config{
 			Certificates: serverCerts,
 		},
 	}

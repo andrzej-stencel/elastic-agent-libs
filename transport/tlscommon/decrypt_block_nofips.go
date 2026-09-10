@@ -34,7 +34,7 @@ func decryptPKCS1Key(block pem.Block, passphrase []byte) (pem.Block, error) {
 	if len(passphrase) == 0 {
 		return block, errors.New("no passphrase available")
 	}
-	decrypted, err := x509.DecryptPEMBlock(&block, passphrase) //nolint:staticcheck // intentional legacy support path
+	decrypted, err := x509.DecryptPEMBlock(&block, passphrase)
 	if err != nil {
 		return block, fmt.Errorf("failed to decrypt PKCS#1 key: %w", err)
 	}

@@ -46,7 +46,7 @@ func TestMapStrUpdate(t *testing.T) {
 
 	a.Update(b)
 
-	assert.Equal(a, M{"a": 1, "b": 3, "c": 4})
+	assert.Equal(M{"a": 1, "b": 3, "c": 4}, a)
 }
 
 func TestMapStrDeepUpdate(t *testing.T) {
@@ -120,7 +120,7 @@ func TestMapStrUnion(t *testing.T) {
 
 	c := Union(a, b)
 
-	assert.Equal(c, M{"a": 1, "b": 3, "c": 4})
+	assert.Equal(M{"a": 1, "b": 3, "c": 4}, c)
 }
 
 func TestMapStrCopyFieldsTo(t *testing.T) {
@@ -148,19 +148,19 @@ func TestMapStrCopyFieldsTo(t *testing.T) {
 	assert.Equal(M{}, c)
 
 	err = m.CopyFieldsTo(c, "a")
-	assert.Equal(nil, err)
+	assert.NoError(err)
 	assert.Equal(M{"a": M{"a1": 2, "a2": 3}}, c)
 
 	err = m.CopyFieldsTo(c, "c.c1")
-	assert.Equal(nil, err)
+	assert.NoError(err)
 	assert.Equal(M{"a": M{"a1": 2, "a2": 3}, "c": M{"c1": 1}}, c)
 
 	err = m.CopyFieldsTo(c, "b")
-	assert.Equal(nil, err)
+	assert.NoError(err)
 	assert.Equal(M{"a": M{"a1": 2, "a2": 3}, "c": M{"c1": 1}, "b": 2}, c)
 
 	err = m.CopyFieldsTo(c, "c.c3.c32")
-	assert.Equal(nil, err)
+	assert.NoError(err)
 	assert.Equal(M{"a": M{"a1": 2, "a2": 3}, "c": M{"c1": 1, "c3": M{"c32": 2}}, "b": 2}, c)
 }
 
@@ -180,19 +180,19 @@ func TestMapStrDelete(t *testing.T) {
 		m := testMap.Clone()
 
 		err := m.Delete("c.c2")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c31": 1, "c32": 2}}}, m)
 
 		err = m.Delete("c.c2.c21")
-		assert.NotEqual(nil, err)
+		assert.Error(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c31": 1, "c32": 2}}}, m)
 
 		err = m.Delete("c.c3.c31")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c32": 2}}}, m)
 
 		err = m.Delete("c")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{}, m)
 	})
 
@@ -201,19 +201,19 @@ func TestMapStrDelete(t *testing.T) {
 		m := testMap.Clone()
 
 		err := m.DeleteWithCleanup("c.c2")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c31": 1, "c32": 2}}}, m)
 
 		err = m.DeleteWithCleanup("c.c2.c21")
-		assert.NotEqual(nil, err)
+		assert.Error(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c31": 1, "c32": 2}}}, m)
 
 		err = m.DeleteWithCleanup("c.c3.c31")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{"c": M{"c1": 1, "c3": M{"c32": 2}}}, m)
 
 		err = m.DeleteWithCleanup("c")
-		assert.Equal(nil, err)
+		assert.NoError(err)
 		assert.Equal(M{}, m)
 	})
 }
@@ -311,28 +311,28 @@ func TestHasKey(t *testing.T) {
 	}
 
 	hasKey, err := m.HasKey("c.c2")
-	assert.Equal(nil, err)
-	assert.Equal(true, hasKey)
+	assert.NoError(err)
+	assert.True(hasKey)
 
 	hasKey, err = m.HasKey("c.c4")
-	assert.Equal(nil, err)
-	assert.Equal(false, hasKey)
+	assert.NoError(err)
+	assert.False(hasKey)
 
 	hasKey, err = m.HasKey("c.c3.c32")
-	assert.Equal(nil, err)
-	assert.Equal(true, hasKey)
+	assert.NoError(err)
+	assert.True(hasKey)
 
 	hasKey, err = m.HasKey("dd")
-	assert.Equal(nil, err)
-	assert.Equal(false, hasKey)
+	assert.NoError(err)
+	assert.False(hasKey)
 
 	hasKey, err = m.HasKey("d.f")
-	assert.Equal(nil, err)
-	assert.Equal(true, hasKey)
+	assert.NoError(err)
+	assert.True(hasKey)
 
 	hasKey, err = m.HasKey("c.c4.f")
-	assert.Equal(nil, err)
-	assert.Equal(true, hasKey)
+	assert.NoError(err)
+	assert.True(hasKey)
 }
 
 func TestMPut(t *testing.T) {
@@ -553,7 +553,7 @@ func TestStringToPrint(t *testing.T) {
 	m := M{}
 
 	assert.Equal(t, "{}", m.StringToPrint())
-	assert.Equal(t, true, len(m.StringToPrint()) > 0)
+	assert.NotEmpty(t, m.StringToPrint())
 }
 
 func TestMergeFields(t *testing.T) {
@@ -1091,13 +1091,13 @@ func TestMapStrJSONLog(t *testing.T) {
 		// Zap adds a newline to end the JSON object.
 		actualJSON := strings.TrimSpace(buf.String())
 
-		assert.Equal(t, expectedJSON, actualJSON)
+		assert.JSONEq(t, expectedJSON, actualJSON)
 	}
 }
 
 func BenchmarkMapStrLogging(b *testing.B) {
 	err := logp.DevelopmentSetup(logp.ToDiscardOutput())
-	require.Nil(b, err)
+	require.NoError(b, err)
 	logger := logp.NewLogger("benchtest")
 
 	m := M{

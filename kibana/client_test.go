@@ -335,7 +335,7 @@ func TestRetryWithBody(t *testing.T) {
 	kibanaTS := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		n := requestCount.Add(1)
 		body, _ := io.ReadAll(r.Body)
-		assert.Equal(t, payload, string(body), "body must be identical on every attempt")
+		assert.JSONEq(t, payload, string(body), "body must be identical on every attempt")
 		if n < 2 {
 			w.WriteHeader(http.StatusBadGateway)
 			return

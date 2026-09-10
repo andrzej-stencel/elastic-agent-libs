@@ -113,7 +113,7 @@ func readPEMFile(log *logp.Logger, s, passphrase string, disableLegacy bool) ([]
 		}
 
 		switch {
-		case x509.IsEncryptedPEMBlock(block): //nolint:staticcheck // deprecated PKCS#1 PEM encryption
+		case x509.IsEncryptedPEMBlock(block):
 			if disableLegacy {
 				return nil, fmt.Errorf("encrypted PKCS#1 PEM keys are not supported; convert to PKCS#8")
 			}

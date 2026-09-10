@@ -64,7 +64,7 @@ func TestTLSVersion(t *testing.T) {
 			require.Equal(t, tt.want, tv.Details())
 			if tt.want == nil {
 				require.Equal(t, tt.want, tv.Details())
-				require.Equal(t, tt.name, "unknown")
+				require.Equal(t, "unknown", tt.name)
 			} else {
 				require.Equal(t, tt.name, tv.String())
 			}

@@ -80,7 +80,7 @@ func TestIterExpvarCaptureVars(t *testing.T) {
 		}
 	})
 
-	assert.Equal(t, collected, expected)
+	assert.Equal(t, expected, collected)
 }
 
 func getOrCreateInt(name string) *expvar.Int {

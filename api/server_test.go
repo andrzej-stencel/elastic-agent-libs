@@ -49,7 +49,7 @@ func TestConfiguration(t *testing.T) {
 		})
 
 		_, err := New(nil, simpleMux(), cfg)
-		assert.Equal(t, err == nil, false)
+		assert.Error(t, err)
 	})
 
 	t.Run("when security descriptor is set", func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestConfiguration(t *testing.T) {
 		})
 
 		_, err := New(nil, simpleMux(), cfg)
-		assert.Equal(t, err == nil, false)
+		assert.Error(t, err)
 	})
 }
 
@@ -227,7 +227,7 @@ func TestAttachHandler(t *testing.T) {
 	assert.Equal(t, "test!", string(body))
 
 	err = s.AttachHandler("/test", h)
-	assert.NotNil(t, err)
+	assert.Error(t, err)
 }
 
 type testHandler struct{}
