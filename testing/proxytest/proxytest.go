@@ -176,7 +176,7 @@ func New(t *testing.T, optns ...Option) *Proxy {
 		opts.logFn = func(format string, a ...any) {}
 	}
 
-	l, err := net.Listen("tcp", opts.addr) //nolint:gosec,nolintlint // it's a test
+	l, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", opts.addr) //nolint:gosec,nolintlint // it's a test
 	if err != nil {
 		t.Fatalf("NewServer failed to create a net.Listener: %v", err)
 	}

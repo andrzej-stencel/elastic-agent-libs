@@ -117,7 +117,7 @@ func BeforeRun() {
 	mux.HandleFunc("/debug/vars", metricsHandler)
 
 	// Ensure we are listening before returning
-	listener, err := net.Listen("tcp", *httpprof)
+	listener, err := net.Listen("tcp", *httpprof) //nolint:noctx // no context is available here; the pprof listener lives for the whole process lifetime
 	if err != nil {
 		logger.Errorf("Failed to start pprof listener: %v", err)
 		os.Exit(1)
