@@ -92,7 +92,7 @@ func TestTimestamps(t *testing.T) {
 		ts := time.Unix(1234, 5678).UTC()
 
 		off := int16(-1)
-		expected := []uint64{uint64(5678) | uint64(uint16(off))<<32, 1234}
+		expected := []uint64{uint64(5678) | uint64(uint16(off))<<32, 1234} //nolint:gosec // G115: -1 is reinterpreted as uint16 on purpose, that is how the offset is encoded
 
 		err := Convert(&m, struct{ Timestamp time.Time }{ts})
 		require.NoError(t, err)
@@ -107,7 +107,7 @@ func TestTimestamps(t *testing.T) {
 		var v testStruct
 		off := int16(-1)
 		err := Convert(&v, mapstr.M{
-			"timestamp": []uint64{5678 | (uint64(uint16(off)))<<32, 1234},
+			"timestamp": []uint64{5678 | (uint64(uint16(off)))<<32, 1234}, //nolint:gosec // G115: -1 is reinterpreted as uint16 on purpose, that is how the offset is encoded
 		})
 		require.NoError(t, err)
 		expected := time.Unix(1234, 5678).UTC()

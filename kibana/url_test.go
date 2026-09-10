@@ -82,6 +82,7 @@ func TestGetUrl(t *testing.T) {
 		assert.Equal(t, output, urlNew, "input: %v", input)
 	}
 
+	//nolint:gosec // G101: fake credentials for testing
 	inputOutputWithDefaults := map[string]string{
 		"http://localhost":                          "http://localhost:9200/hello",
 		"http://localhost/test":                     "http://localhost:9200/test",

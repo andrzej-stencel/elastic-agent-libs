@@ -40,5 +40,5 @@ func AvailableTCP4Port() (uint16, error) {
 		return 0, fmt.Errorf("unexpected listener address type %T", listener.Addr())
 	}
 
-	return uint16(tcpAddr.Port), nil
+	return uint16(tcpAddr.Port), nil //nolint:gosec // G115: a TCP port is always in the 0-65535 range
 }

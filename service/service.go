@@ -31,6 +31,7 @@ import (
 	"runtime/pprof"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/elastic/elastic-agent-libs/logp"
 	"github.com/elastic/elastic-agent-libs/monitoring"
@@ -123,9 +124,10 @@ func BeforeRun() {
 		os.Exit(1)
 	}
 
+	srv := &http.Server{Handler: mux, ReadHeaderTimeout: 10 * time.Second}
 	go func() {
 		// Serve returns always a non-nil error
-		err := http.Serve(listener, mux)
+		err := srv.Serve(listener)
 		logger.Infof("Finished pprof endpoint: %v", err)
 	}()
 }
