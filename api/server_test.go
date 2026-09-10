@@ -142,7 +142,9 @@ func isWindows() bool {
 func shortTempDir(t *testing.T) string {
 	dir, err := os.MkdirTemp("", "api")
 	require.NoError(t, err, "cannot create temporary directory")
-	t.Cleanup(func() { os.RemoveAll(dir) })
+	t.Cleanup(func() {
+		assert.NoError(t, os.RemoveAll(dir), "cannot remove temporary directory")
+	})
 	return dir
 }
 
